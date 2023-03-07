@@ -17,10 +17,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://www.github.com/general-galactic/capacitor-esp-idf-provisioning.git"
+    "url": "git+https://www.github.com/cap-esp-idf.git"
   },
   "bugs": {
-    "url": "https://www.github.com/general-galactic/capacitor-esp-idf-provisioning/issues"
+    "url": "https://www.github.com/cap-esp-idf/issues"
   },
   "keywords": [
     "capacitor",
@@ -75,8 +75,5 @@
     "android": {
       "src": "android"
     }
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
   }
 }

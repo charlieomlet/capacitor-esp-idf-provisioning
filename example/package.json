@@ -14,7 +14,7 @@
     "@capacitor/core": "latest",
     "@capacitor/camera": "latest",
     "@capacitor/splash-screen": "latest",
-    "@general-galactic/capacitor-esp-idf-provisioning": "file:.."
+    "@cap-esp-idf": "file:.."
   },
   "devDependencies": {
     "@capacitor/cli": "latest"

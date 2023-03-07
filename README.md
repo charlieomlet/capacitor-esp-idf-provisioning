@@ -1,4 +1,4 @@
-# @general-galactic/capacitor-esp-idf-provisioning
+# @cap-esp-idf
 
 A capacitor plugin that wraps the Espressif IDF Provisioning libraries for iOS and Android.
 
@@ -11,13 +11,14 @@ Using this library will allow you to use an Ionic app to provision Espressif dev
 ## Install
 
 ```bash
-npm install @general-galactic/capacitor-esp-idf-provisioning
+npm install @cap-esp-idf
 npx cap sync
 ```
 
 ## Initial Integration into an Android App
 
 Apps will need to add the maven repo to their `build.gradle` file so that the ESPProvision library from Espressif can be included:
+
 ```
 allprojects {
     repositories {
@@ -40,23 +41,23 @@ You need to run `npx cap sync`
 
 <docgen-index>
 
-* [`checkPermissions()`](#checkpermissions)
-* [`requestPermissions()`](#requestpermissions)
-* [`checkStatus()`](#checkstatus)
-* [`searchESPDevices(...)`](#searchespdevices)
-* [`connect(...)`](#connect)
-* [`scanWifiList(...)`](#scanwifilist)
-* [`provision(...)`](#provision)
-* [`sendCustomDataString(...)`](#sendcustomdatastring)
-* [`disconnect(...)`](#disconnect)
-* [`openLocationSettings()`](#openlocationsettings)
-* [`openBluetoothSettings()`](#openbluetoothsettings)
-* [`openAppSettings()`](#openappsettings)
-* [`enableLogging()`](#enablelogging)
-* [`disableLogging()`](#disablelogging)
-* [Interfaces](#interfaces)
-* [Type Aliases](#type-aliases)
-* [Enums](#enums)
+- [`checkPermissions()`](#checkpermissions)
+- [`requestPermissions()`](#requestpermissions)
+- [`checkStatus()`](#checkstatus)
+- [`searchESPDevices(...)`](#searchespdevices)
+- [`connect(...)`](#connect)
+- [`scanWifiList(...)`](#scanwifilist)
+- [`provision(...)`](#provision)
+- [`sendCustomDataString(...)`](#sendcustomdatastring)
+- [`disconnect(...)`](#disconnect)
+- [`openLocationSettings()`](#openlocationsettings)
+- [`openBluetoothSettings()`](#openbluetoothsettings)
+- [`openAppSettings()`](#openappsettings)
+- [`enableLogging()`](#enablelogging)
+- [`disableLogging()`](#disablelogging)
+- [Interfaces](#interfaces)
+- [Type Aliases](#type-aliases)
+- [Enums](#enums)
 
 </docgen-index>
 
@@ -70,13 +71,13 @@ checkPermissions() => Promise<PermissionStatus>
 ```
 
 Check the status of system permissions:
+
 - **ble** - Bluetooth access
 - **location** - Location access, android only
 
 **Returns:** <code>Promise&lt;<a href="#permissionstatus">PermissionStatus</a>&gt;</code>
 
---------------------
-
+---
 
 ### requestPermissions()
 
@@ -88,8 +89,7 @@ Have the system prompt the user for access to the proper permissions - Android o
 
 **Returns:** <code>Promise&lt;<a href="#permissionstatus">PermissionStatus</a>&gt;</code>
 
---------------------
-
+---
 
 ### checkStatus()
 
@@ -101,8 +101,7 @@ See if the bluetooth adapter is up and running
 
 **Returns:** <code>Promise&lt;<a href="#espprovisioningstatus">EspProvisioningStatus</a>&gt;</code>
 
---------------------
-
+---
 
 ### searchESPDevices(...)
 
@@ -119,8 +118,7 @@ parameters map directly to ESPProvision's own values.
 
 **Returns:** <code>Promise&lt;{ devices?: ESPDevice[]; }&gt;</code>
 
---------------------
-
+---
 
 ### connect(...)
 
@@ -136,8 +134,7 @@ Connect to the device with the given name using the given proofOfPossession.
 
 **Returns:** <code>Promise&lt;{ connected: boolean; }&gt;</code>
 
---------------------
-
+---
 
 ### scanWifiList(...)
 
@@ -153,8 +150,7 @@ Request a list of available WiFi networks from the device with the given name.
 
 **Returns:** <code>Promise&lt;{ networks?: ESPNetwork[]; }&gt;</code>
 
---------------------
-
+---
 
 ### provision(...)
 
@@ -170,8 +166,7 @@ Provision the device onto WiFi using the given ssid and passPhrase.
 
 **Returns:** <code>Promise&lt;{ success: boolean; }&gt;</code>
 
---------------------
-
+---
 
 ### sendCustomDataString(...)
 
@@ -188,8 +183,7 @@ your device during provisioning.
 
 **Returns:** <code>Promise&lt;{ success: boolean; returnString?: string; }&gt;</code>
 
---------------------
-
+---
 
 ### disconnect(...)
 
@@ -203,8 +197,7 @@ Disconnect from the device.
 | ------------- | ------------------------------------ |
 | **`options`** | <code>{ deviceName: string; }</code> |
 
---------------------
-
+---
 
 ### openLocationSettings()
 
@@ -216,8 +209,7 @@ Open the user's location settings for your app. iOS only.
 
 **Returns:** <code>Promise&lt;{ value: boolean; }&gt;</code>
 
---------------------
-
+---
 
 ### openBluetoothSettings()
 
@@ -229,8 +221,7 @@ Open the user's bluetooth settings for your app. iOS only.
 
 **Returns:** <code>Promise&lt;{ value: boolean; }&gt;</code>
 
---------------------
-
+---
 
 ### openAppSettings()
 
@@ -242,8 +233,7 @@ Open the OS settings for your app.
 
 **Returns:** <code>Promise&lt;{ value: boolean; }&gt;</code>
 
---------------------
-
+---
 
 ### enableLogging()
 
@@ -254,8 +244,7 @@ enableLogging() => Promise<void>
 Enable extra logging - useful for troubleshooting. Best on iOS because the iOS ESPProvision
 library offers much more verbose logging when enabled.
 
---------------------
-
+---
 
 ### disableLogging()
 
@@ -265,11 +254,9 @@ disableLogging() => Promise<void>
 
 Disable detailed logging.
 
---------------------
-
+---
 
 ### Interfaces
-
 
 #### PermissionStatus
 
@@ -278,7 +265,6 @@ Disable detailed logging.
 | **`ble`**      | <code><a href="#permissionstate">PermissionState</a></code> |
 | **`location`** | <code><a href="#permissionstate">PermissionState</a></code> |
 
-
 #### EspProvisioningStatus
 
 | Prop           | Type                                                                       |
@@ -286,32 +272,25 @@ Disable detailed logging.
 | **`ble`**      | <code>{ supported: boolean; allowed: boolean; poweredOn: boolean; }</code> |
 | **`location`** | <code>{ allowed: boolean; }</code>                                         |
 
-
 ### Type Aliases
-
 
 #### PermissionState
 
 <code>'prompt' | 'prompt-with-rationale' | 'granted' | 'denied'</code>
 
-
 #### ESPDevice
 
 <code>{ name: string // Your devices must have a unique name advertisementData?: <a href="#espdeviceadvertisingdata">ESPDeviceAdvertisingData</a> }</code>
-
 
 #### ESPDeviceAdvertisingData
 
 <code>{ localName?: string isConnectable?: number manufacturerData?: any serviceUUIDs?: string[] }</code>
 
-
 #### ESPNetwork
 
 <code>{ ssid: string rssi: number auth: 'open' | 'wep' | 'wpapsk' | 'wpawpa2psk' | 'wpa2enterprise' | 'unknown' }</code>
 
-
 ### Enums
-
 
 #### ESPTransport
 
@@ -319,7 +298,6 @@ Disable detailed logging.
 | ------------ | --------------------- |
 | **`ble`**    | <code>'ble'</code>    |
 | **`softap`** | <code>'softap'</code> |
-
 
 #### ESPSecurity
 
