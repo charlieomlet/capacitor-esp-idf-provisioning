@@ -1,5 +1,5 @@
 {
-  "name": "@general-galactic/capacitor-esp-idf-provisioning",
+  "name": "cap-esp-idf",
   "version": "0.0.62",
   "description": "A capacitor plugin that wraps the Espressif IDF Provisioning libraires for iOS and Android.",
   "main": "dist/plugin.cjs.js",
