@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 
@@ -27,6 +28,7 @@ import com.espressif.provisioning.listeners.ProvisionListener;
 import com.espressif.provisioning.listeners.ResponseListener;
 import com.espressif.provisioning.listeners.WiFiScanListener;
 import com.getcapacitor.Bridge;
+import com.getcapacitor.PermissionState;
 import com.getcapacitor.PluginMethod;
 
 import org.greenrobot.eventbus.EventBus;
@@ -140,23 +142,13 @@ public class EspProvisioningBLE {
         return adapter.isEnabled();
     }
 
-    public boolean blePermissionsArGranted(){
-        if (ContextCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) return false;
-        if (ContextCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) return false;
-        if (ContextCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) return false;
-        if (ContextCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) return false;
-        if (ContextCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) return false;
-        if (ContextCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) return false;
-        return true;
-    }
-
     public boolean assertBluetooth(UsesBluetooth listener) {
         if(!this.hasBLEHardware()) {
             if (listener != null) listener.bleNotSupported();
             return false;
         }
 
-        if(!this.blePermissionsArGranted()) {
+        if(!this.blePermissionsGranted()) {
             if (listener != null) listener.blePermissionNotGranted();
             return false;
         }
@@ -169,18 +161,40 @@ public class EspProvisioningBLE {
         return true;
     }
 
+    private boolean blePermissionsGranted(){
+        if (Build.VERSION.SDK_INT >= 31) {
+            if (ActivityCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                Log.d("capacitor-esp-provision", String.format("MISSING PERMISSION: ", Manifest.permission.BLUETOOTH_SCAN));
+                return false;
+            }
+            if (ActivityCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                Log.d("capacitor-esp-provision", String.format("MISSING PERMISSION: ", Manifest.permission.BLUETOOTH_CONNECT));
+                return false;
+            }
+        } else {
+            if (ActivityCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+                Log.d("capacitor-esp-provision", String.format("MISSING PERMISSION: ", Manifest.permission.BLUETOOTH));
+                return false;
+            }
+            if (ActivityCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+                Log.d("capacitor-esp-provision", String.format("MISSING PERMISSION: ", Manifest.permission.BLUETOOTH_ADMIN));
+                return false;
+            }
+        }
+        return true;
+    }
 
     @SuppressLint("MissingPermission")
     @PluginMethod
     public void searchESPDevices(String devicePrefix, ESPConstants.TransportType transport, ESPConstants.SecurityType security, ScanListener listener) {
         if (!this.assertBluetooth(null)) return;
 
-        if (ActivityCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Error permissionError = new Error("Not able to start scan as Location permission is not granted.");
-            errorLog(permissionError);
-            listener.errorOccurred(permissionError);
-            return;
-        }
+        // if (ActivityCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        //     Error permissionError = new Error("Not able to start scan as Location permission is not granted.");
+        //     errorLog(permissionError);
+        //     listener.errorOccurred(permissionError);
+        //     return;
+        // }
 
         // Clear the device cache
         this.devices = new HashMap<String, DiscoveredBluetoothDevice>();
@@ -239,6 +253,7 @@ public class EspProvisioningBLE {
         this.getESPProvisionManager().searchBleEspDevices(devicePrefix, bleScanListener);
     }
 
+    @SuppressLint("MissingPermission")
     public void connect(String deviceName, String proofOfPossession, ConnectListener listener){
         if (!this.assertBluetooth(null)) return;
 
