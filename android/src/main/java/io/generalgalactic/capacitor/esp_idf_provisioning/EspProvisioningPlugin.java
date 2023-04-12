@@ -460,6 +460,8 @@ public class EspProvisioningPlugin extends Plugin implements EspProvisioningEven
                 return ESPConstants.SecurityType.SECURITY_0;
             case "secure":
                 return ESPConstants.SecurityType.SECURITY_1;
+            case "secure2":
+                return ESPConstants.SecurityType.SECURITY_2;
             default:
                 throw new Error("Unknown security type: " + securityString);
         }
