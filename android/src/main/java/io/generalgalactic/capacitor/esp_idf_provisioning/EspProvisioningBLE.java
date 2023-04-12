@@ -307,7 +307,7 @@ public class EspProvisioningBLE {
 
                         ESPDevice device = provisionManager.getEspDevice();
                         device.setProofOfPossession(proofOfPossession);
-                        device.setUserName('wifiprov')
+                        device.setUserName("wifiprov");
 
                         // Initing a session during connection so that secret failures happen
                         // during connection (like iOS) and not later during other operations.
