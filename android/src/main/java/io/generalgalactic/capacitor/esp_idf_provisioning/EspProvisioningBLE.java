@@ -303,7 +303,7 @@ public class EspProvisioningBLE {
                 switch (event.getEventType()) {
                     case ESPConstants.EVENT_DEVICE_CONNECTED:
                         debugLog("Device connected event received");
-                        provisioningBLE.startListeningForDisconnection(bleDevice.getName());
+                        // provisioningBLE.startListeningForDisconnection(bleDevice.getName());
 
                         ESPDevice device = provisionManager.getEspDevice();
                         device.setProofOfPossession(proofOfPossession);
