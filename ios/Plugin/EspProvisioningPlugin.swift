@@ -95,9 +95,16 @@ public class EspProvisioningPlugin: CAPPlugin {
             return call.reject("deviceName is required")
         }
 
+        var errorCount = 0
+
+        // Laszlo Kiss: First result is failing due to a mysterious Protobuf error, so we ignore that
         implementation.scanWifiList(deviceName: deviceName) { networks, error in
             if let error = error {
-                call.reject(error.message)
+                errorCount = errorCount + 1
+                if(errorCount > 1){
+                    call.reject(error.message)
+                }
+
                 return
             }
         
