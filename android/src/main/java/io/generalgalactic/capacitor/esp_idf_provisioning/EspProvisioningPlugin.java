@@ -290,6 +290,8 @@ public class EspProvisioningPlugin extends Plugin implements EspProvisioningEven
                             network.put("ssid", accessPoint.getWifiName());
                             network.put("rssi", accessPoint.getRssi());
                             network.put("security", accessPoint.getSecurity());
+                            network.put("bssid", "bssid");
+                            network.put("channel", 1);
                             networksResponse.put(network);
                         }
                         JSObject ret = new JSObject();

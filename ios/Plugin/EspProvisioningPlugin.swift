@@ -200,7 +200,10 @@ public class EspProvisioningPlugin: CAPPlugin {
             var networkOutput: [String:Any] = [:]
             networkOutput["ssid"] = network.ssid
             networkOutput["rssi"] = network.rssi
+            networkOutput["bssid"] = "bssid"
             networkOutput["auth"] = self.authModeToString(network.auth)
+            networkOutput["channel"] = network.channel
+
             networkOutputs.append(networkOutput)
         }
         return ["networks": networkOutputs]
@@ -217,9 +220,9 @@ public class EspProvisioningPlugin: CAPPlugin {
         for device in devices {
             var deviceOutput: [String:Any] = [:]
             deviceOutput["name"] = device.name
-            if let advertisementData = device.advertisementData {
-                deviceOutput["advertisementData"] = self.advertisementDataToJS(advertisementData)
-            }
+            // if let advertisementData = device.advertisementData {
+            //     deviceOutput["advertisementData"] = self.advertisementDataToJS(advertisementData)
+            // }
             devicesOutput.append(deviceOutput)
         }
         return ["devices": devicesOutput]

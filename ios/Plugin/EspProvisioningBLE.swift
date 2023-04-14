@@ -49,7 +49,7 @@ class ConnectionDelegate: ESPDeviceConnectionDelegate {
     }
     
     func getUsername(forDevice: ESPProvision.ESPDevice, completionHandler: @escaping (String?) -> Void) {
-        completionHandler(nil) // TODO: how to support sec2?
+        completionHandler("wifiprov")
     }
 
 }
@@ -288,7 +288,7 @@ public class EspProvisioningBLE: NSObject, ESPBLEDelegate, CBCentralManagerDeleg
                     completionHandler([], nil)
                 }
                 self.debug("searchESPDevices error: code=\(error.code); description=\(error.description);")
-                completionHandler(nil, ESPProvisioningError.libraryError(error.description, errorCode: error.code))
+                completionHandler([], ESPProvisioningError.libraryError(error.description, errorCode: error.code))
             }
             
             // We need to cache devices so we can retain references to them while the capacitor bridge is used to
