@@ -271,6 +271,8 @@ public class EspProvisioningPlugin: CAPPlugin {
         switch security {
         case "secure":
             return ESPSecurity.secure
+        case "secure2":
+            return ESPSecurity.secure2
         case "unsecure":
             return ESPSecurity.unsecure
         default:
