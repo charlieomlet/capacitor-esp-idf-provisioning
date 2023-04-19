@@ -12,7 +12,7 @@
     "android/build.gradle",
     "dist/",
     "ios/Plugin/",
-    "LaszloKissCapEspIdf.podspec"
+    "LaszlokissCapEspIdf.podspec"
   ],
   "author": "Laszlo Kiss",
   "license": "MIT",
