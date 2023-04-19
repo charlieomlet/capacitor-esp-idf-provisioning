@@ -13,7 +13,7 @@
     "ios/Plugin/",
     "LaszloKissCapEspIdf.podspec"
   ],
-  "author": "Joshua Kennedy",
+  "author": "Laszlo Kiss",
   "license": "MIT",
   "repository": {
     "type": "git",
