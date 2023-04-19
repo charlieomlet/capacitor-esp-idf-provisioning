@@ -1,6 +1,6 @@
 {
   "name": "cap-esp-idf",
-  "version": "0.0.83",
+  "version": "0.0.84",
   "description": "A capacitor plugin that wraps the Espressif IDF Provisioning libraires for iOS and Android.",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
