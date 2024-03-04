@@ -1,7 +1,6 @@
 {
-  "name": "@laszlokiss/cap-esp-idf",
-  "version": "0.0.4",
-  "private": false,
+  "name": "cap-esp-idf",
+  "version": "0.0.86",
   "description": "A capacitor plugin that wraps the Espressif IDF Provisioning libraires for iOS and Android.",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -12,9 +11,9 @@
     "android/build.gradle",
     "dist/",
     "ios/Plugin/",
-    "LaszlokissCapEspIdf.podspec"
+    "CapEspIdf.podspec"
   ],
-  "author": "Laszlo Kiss",
+  "author": "Joshua Kennedy",
   "license": "MIT",
   "repository": {
     "type": "git",

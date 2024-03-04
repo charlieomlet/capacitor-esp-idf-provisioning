@@ -73,11 +73,14 @@ public class EspProvisioningPlugin: CAPPlugin {
         guard let deviceName = call.getString("deviceName") else {
             return call.reject("deviceName is required")
         }
+        guard let userName = call.getString("userName") else {
+            return call.reject("userName is required")
+        }
         guard let proofOfPossession = call.getString("proofOfPossession") else {
             return call.reject("proofOfPossession is required")
         }
         
-        implementation.connect(deviceName: deviceName, proofOfPossession: proofOfPossession) { success, error, cause in
+        implementation.connect(deviceName: deviceName, userName: userName, proofOfPossession: proofOfPossession) { success, error, cause in
             if let error = error {
                 if let cause = cause {
                     call.reject(error.message, "connect-error-1", cause)
@@ -87,6 +90,15 @@ public class EspProvisioningPlugin: CAPPlugin {
                 return
             }
             call.resolve(["connected": success])
+        }
+    }
+    
+    @objc func getVersionInfo(_ call: CAPPluginCall) {
+        implementation.getVersionInfo() { versionInfo, error in
+            if let error = error {
+                return call.reject(error)
+            }
+            call.resolve(["versionInfo": versionInfo])
         }
     }
     

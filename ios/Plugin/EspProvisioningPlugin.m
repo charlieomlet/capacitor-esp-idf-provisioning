@@ -6,6 +6,7 @@
 CAP_PLUGIN(EspProvisioningPlugin, "EspProvisioning",
     CAP_PLUGIN_METHOD(searchESPDevices, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(connect, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(getVersionInfo, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(scanWifiList, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(provision, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(disconnect, CAPPluginReturnPromise);

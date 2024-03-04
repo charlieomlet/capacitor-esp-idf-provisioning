@@ -36,6 +36,7 @@ import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.ScanWiFiListe
 import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.SendCustomDataStringListener;
 import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.UsesBluetooth;
 import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.UsesESPDevice;
+import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.VersionInfoListener;
 import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.WifiProvisionListener;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -267,7 +268,7 @@ public class EspProvisioningBLE {
     }
 
     @SuppressLint("MissingPermission")
-    public void connect(String deviceName, String proofOfPossession, ConnectListener listener) {
+    public void connect(String deviceName, String userName, String proofOfPossession, ConnectListener listener) {
         if (!this.assertBluetooth(null)) return;
 
         DiscoveredBluetoothDevice bleDevice = this.devices.get(deviceName);
@@ -307,7 +308,7 @@ public class EspProvisioningBLE {
 
                         ESPDevice device = provisionManager.getEspDevice();
                         device.setProofOfPossession(proofOfPossession);
-                        device.setUserName("wifiprov");
+                        device.setUserName(userName);
 
                         // Initing a session during connection so that secret failures happen
                         // during connection (like iOS) and not later during other operations.
@@ -347,6 +348,18 @@ public class EspProvisioningBLE {
 
         this.handler.postDelayed(connectionTimeoutTask, this.DEVICE_CONNECT_TIMEOUT);
     }
+
+    public void getVersionInfo(VersionInfoListener listener) {
+        ESPDevice device = provisionManager.getEspDevice();
+
+        if (device == null) {
+            listener.deviceNotFound(this.currentDeviceName);
+            return;
+        }
+
+        listener.versionInfo(device.getVersionInfo());
+    }
+
 
     private void startListeningForDisconnection(String deviceName) {
         this.currentDeviceName = deviceName;

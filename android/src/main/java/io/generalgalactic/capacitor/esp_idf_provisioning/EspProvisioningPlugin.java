@@ -26,6 +26,7 @@ import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.EspProvisioni
 import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.ScanListener;
 import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.ScanWiFiListener;
 import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.SendCustomDataStringListener;
+import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.VersionInfoListener;
 import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.WifiProvisionListener;
 import java.util.Arrays;
 import java.util.List;
@@ -238,10 +239,12 @@ public class EspProvisioningPlugin extends Plugin implements EspProvisioningEven
         if (!this.implementation.assertBluetooth(new BluetoothRequiredCallHandler(call))) return;
 
         String deviceName = call.getString("deviceName");
+        String userName = call.getString("userName");
         String proofOfPossession = call.getString("proofOfPossession");
 
         this.implementation.connect(
                 deviceName,
+                userName,
                 proofOfPossession,
                 new ConnectListener() {
                     @Override
@@ -272,6 +275,25 @@ public class EspProvisioningPlugin extends Plugin implements EspProvisioningEven
                     }
                 }
             );
+    }
+
+    @PluginMethod
+    public void getVersionInfo(PluginCall call) {
+        this.implementation.getVersionInfo(
+            new VersionInfoListener() {
+                @Override
+                public void versionInfo(String versionInfo) {
+                    JSObject ret = new JSObject();
+                    ret.put("versionInfo", versionInfo);
+                    call.resolve(ret);
+                }
+
+                @Override
+                public void deviceNotFound(String deviceName) {
+                    call.reject("Device not found: " + deviceName);
+                }
+            }
+        );
     }
 
     @PluginMethod

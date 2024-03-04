@@ -38,9 +38,11 @@ extension ESPProvisioningError: LocalizedError {
 class ConnectionDelegate: ESPDeviceConnectionDelegate {
 
 
+    private let userName: String
     private let proofOfPossesion: String
     
-    init(proofOfPossesion: String) {
+    init(userName: String, proofOfPossesion: String) {
+        self.userName = userName
         self.proofOfPossesion = proofOfPossesion
     }
     
@@ -48,8 +50,8 @@ class ConnectionDelegate: ESPDeviceConnectionDelegate {
         completionHandler(self.proofOfPossesion)
     }
     
-    func getUsername(forDevice: ESPProvision.ESPDevice, completionHandler: @escaping (String?) -> Void) {
-        completionHandler("wifiprov")
+    func getUsername(forDevice: ESPDevice, completionHandler: @escaping (String?) -> Void) {
+        completionHandler(self.userName)
     }
 
 }
@@ -326,14 +328,14 @@ public class EspProvisioningBLE: NSObject, ESPBLEDelegate, CBCentralManagerDeleg
         }
     }
 
-    func connect(deviceName: String, proofOfPossession: String, completionHandler: @escaping (Bool, ESPProvisioningError?, Error?) -> Void) -> Void {
+    func connect(deviceName: String, userName: String, proofOfPossession: String, completionHandler: @escaping (Bool, ESPProvisioningError?, Error?) -> Void) -> Void {
         guard let device = self.deviceMap[deviceName] else {
             return completionHandler(false, ESPProvisioningError.deviceNotFound(deviceName), nil)
         }
 
         self.debug("Connecting to device: \(deviceName) \(proofOfPossession)")
 
-        device.connect(delegate: ConnectionDelegate(proofOfPossesion: proofOfPossession)) { status in
+        device.connect(delegate: ConnectionDelegate(userName: userName, proofOfPossesion: proofOfPossession)) { status in
             switch status {
             case .connected:
                 self.setConnectedDevice(device)
@@ -345,6 +347,22 @@ public class EspProvisioningBLE: NSObject, ESPBLEDelegate, CBCentralManagerDeleg
                 return completionHandler(false, ESPProvisioningError.disconnected(deviceName), nil)
             }
         }
+    }
+    
+    func getVersionInfo(completionHandler: @escaping (String, String?) -> Void) -> Void {
+        guard let device = self.connectedDevice else {
+            return completionHandler("", "Device must be connected first")
+        }
+        
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: self.connectedDevice?.versionInfo, options: .prettyPrinted) else {
+            return completionHandler("", "Something is wrong while converting dictionary to JSON data.")
+        }
+
+        guard let jsonString = String(data: jsonData, encoding: .utf8) else {
+            return completionHandler("", "Something is wrong while converting JSON data to JSON string.")
+        }
+        
+        return completionHandler(jsonString, nil)
     }
 
     func scanWifiList(deviceName: String, completionHandler: @escaping ([ESPWifiNetwork]?, ESPProvisioningError?) -> Void) -> Void {

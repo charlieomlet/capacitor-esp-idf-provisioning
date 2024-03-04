@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.generalgalactic.capacitor.esp_idf_provisioning"
+    
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" tools:targetApi="s" android:usesPermissionFlags="neverForLocation" />
