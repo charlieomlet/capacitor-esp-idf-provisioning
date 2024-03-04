@@ -1,0 +1,389 @@
+{
+  "api": {
+    "name": "EspProvisioningPlugin",
+    "slug": "espprovisioningplugin",
+    "docs": "",
+    "tags": [],
+    "methods": [
+      {
+        "name": "checkPermissions",
+        "signature": "() => Promise<PermissionStatus>",
+        "parameters": [],
+        "returns": "Promise<PermissionStatus>",
+        "tags": [],
+        "docs": "Check the status of system permissions:\n- **ble** - Bluetooth access\n- **location** - Location access, android only",
+        "complexTypes": [
+          "PermissionStatus"
+        ],
+        "slug": "checkpermissions"
+      },
+      {
+        "name": "requestPermissions",
+        "signature": "() => Promise<PermissionStatus>",
+        "parameters": [],
+        "returns": "Promise<PermissionStatus>",
+        "tags": [],
+        "docs": "Have the system prompt the user for access to the proper permissions - Android only.",
+        "complexTypes": [
+          "PermissionStatus"
+        ],
+        "slug": "requestpermissions"
+      },
+      {
+        "name": "checkStatus",
+        "signature": "() => Promise<EspProvisioningStatus>",
+        "parameters": [],
+        "returns": "Promise<EspProvisioningStatus>",
+        "tags": [],
+        "docs": "See if the bluetooth adapter is up and running",
+        "complexTypes": [
+          "EspProvisioningStatus"
+        ],
+        "slug": "checkstatus"
+      },
+      {
+        "name": "searchESPDevices",
+        "signature": "(options: { devicePrefix: string; transport: ESPTransport; security: ESPSecurity; }) => Promise<{ devices?: ESPDevice[]; }>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "{ devicePrefix: string; transport: ESPTransport; security: ESPSecurity; }"
+          }
+        ],
+        "returns": "Promise<{ devices?: ESPDevice[] | undefined; }>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options"
+          }
+        ],
+        "docs": "Perform a BLE scan to find devices that are connection with the given devicePrefix. The transport and security\nparameters map directly to ESPProvision's own values.",
+        "complexTypes": [
+          "ESPDevice",
+          "ESPTransport",
+          "ESPSecurity"
+        ],
+        "slug": "searchespdevices"
+      },
+      {
+        "name": "connect",
+        "signature": "(options: { deviceName: string; proofOfPossession: string; }) => Promise<{ connected: boolean; }>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "{ deviceName: string; proofOfPossession: string; }"
+          }
+        ],
+        "returns": "Promise<{ connected: boolean; }>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options"
+          }
+        ],
+        "docs": "Connect to the device with the given name using the given proofOfPossession.",
+        "complexTypes": [],
+        "slug": "connect"
+      },
+      {
+        "name": "scanWifiList",
+        "signature": "(options: { deviceName: string; }) => Promise<{ networks?: ESPNetwork[]; }>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "{ deviceName: string; }"
+          }
+        ],
+        "returns": "Promise<{ networks?: ESPNetwork[] | undefined; }>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options"
+          }
+        ],
+        "docs": "Request a list of available WiFi networks from the device with the given name.",
+        "complexTypes": [
+          "ESPNetwork"
+        ],
+        "slug": "scanwifilist"
+      },
+      {
+        "name": "provision",
+        "signature": "(options: { deviceName: string; ssid: string; passPhrase?: string; }) => Promise<{ success: boolean; }>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "{ deviceName: string; ssid: string; passPhrase?: string | undefined; }"
+          }
+        ],
+        "returns": "Promise<{ success: boolean; }>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options"
+          }
+        ],
+        "docs": "Provision the device onto WiFi using the given ssid and passPhrase.",
+        "complexTypes": [],
+        "slug": "provision"
+      },
+      {
+        "name": "sendCustomDataString",
+        "signature": "(options: { deviceName: string; path: string; dataString: string; }) => Promise<{ success: boolean; returnString?: string; }>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "{ deviceName: string; path: string; dataString: string; }"
+          }
+        ],
+        "returns": "Promise<{ success: boolean; returnString?: string | undefined; }>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options"
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "docs": "Send a custom string to the device with the given name. This is usefull if you need to share other data with\nyour device during provisioning. NOTE: Android will truncate returned strings to around 512 bytes. If you need\nto send more than 512 bytes back on a read you'll need to implement a mechanism to do so.",
+        "complexTypes": [],
+        "slug": "sendcustomdatastring"
+      },
+      {
+        "name": "disconnect",
+        "signature": "(options: { deviceName: string; }) => Promise<void>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "{ deviceName: string; }"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options"
+          }
+        ],
+        "docs": "Disconnect from the device.",
+        "complexTypes": [],
+        "slug": "disconnect"
+      },
+      {
+        "name": "openLocationSettings",
+        "signature": "() => Promise<{ value: boolean; }>",
+        "parameters": [],
+        "returns": "Promise<{ value: boolean; }>",
+        "tags": [],
+        "docs": "Open the user's location settings for your app. iOS only.",
+        "complexTypes": [],
+        "slug": "openlocationsettings"
+      },
+      {
+        "name": "openBluetoothSettings",
+        "signature": "() => Promise<{ value: boolean; }>",
+        "parameters": [],
+        "returns": "Promise<{ value: boolean; }>",
+        "tags": [],
+        "docs": "Open the user's bluetooth settings for your app. iOS only.",
+        "complexTypes": [],
+        "slug": "openbluetoothsettings"
+      },
+      {
+        "name": "openAppSettings",
+        "signature": "() => Promise<{ value: boolean; }>",
+        "parameters": [],
+        "returns": "Promise<{ value: boolean; }>",
+        "tags": [],
+        "docs": "Open the OS settings for your app.",
+        "complexTypes": [],
+        "slug": "openappsettings"
+      },
+      {
+        "name": "enableLogging",
+        "signature": "() => Promise<void>",
+        "parameters": [],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "Enable extra logging - useful for troubleshooting. Best on iOS because the iOS ESPProvision\nlibrary offers much more verbose logging when enabled.",
+        "complexTypes": [],
+        "slug": "enablelogging"
+      },
+      {
+        "name": "disableLogging",
+        "signature": "() => Promise<void>",
+        "parameters": [],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "Disable detailed logging.",
+        "complexTypes": [],
+        "slug": "disablelogging"
+      }
+    ],
+    "properties": []
+  },
+  "interfaces": [
+    {
+      "name": "PermissionStatus",
+      "slug": "permissionstatus",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "ble",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "PermissionState"
+          ],
+          "type": "PermissionState"
+        },
+        {
+          "name": "location",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "PermissionState"
+          ],
+          "type": "PermissionState"
+        }
+      ]
+    },
+    {
+      "name": "EspProvisioningStatus",
+      "slug": "espprovisioningstatus",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "ble",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "{ supported: boolean; allowed: boolean; poweredOn: boolean; }"
+        },
+        {
+          "name": "location",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "{ allowed: boolean; }"
+        }
+      ]
+    }
+  ],
+  "enums": [
+    {
+      "name": "ESPTransport",
+      "slug": "esptransport",
+      "members": [
+        {
+          "name": "ble",
+          "value": "'ble'",
+          "tags": [],
+          "docs": ""
+        },
+        {
+          "name": "softap",
+          "value": "'softap'",
+          "tags": [],
+          "docs": ""
+        }
+      ]
+    },
+    {
+      "name": "ESPSecurity",
+      "slug": "espsecurity",
+      "members": [
+        {
+          "name": "unsecure",
+          "value": "'unsecure'",
+          "tags": [],
+          "docs": ""
+        },
+        {
+          "name": "secure",
+          "value": "'secure'",
+          "tags": [],
+          "docs": ""
+        },
+        {
+          "name": "secure2",
+          "value": "'secure2'",
+          "tags": [],
+          "docs": ""
+        }
+      ]
+    }
+  ],
+  "typeAliases": [
+    {
+      "name": "PermissionState",
+      "slug": "permissionstate",
+      "docs": "",
+      "types": [
+        {
+          "text": "'prompt'",
+          "complexTypes": []
+        },
+        {
+          "text": "'prompt-with-rationale'",
+          "complexTypes": []
+        },
+        {
+          "text": "'granted'",
+          "complexTypes": []
+        },
+        {
+          "text": "'denied'",
+          "complexTypes": []
+        }
+      ]
+    },
+    {
+      "name": "ESPDevice",
+      "slug": "espdevice",
+      "docs": "",
+      "types": [
+        {
+          "text": "{\n  name: string // Your devices must have a unique name\n  advertisementData?: ESPDeviceAdvertisingData\n}",
+          "complexTypes": [
+            "ESPDeviceAdvertisingData"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ESPDeviceAdvertisingData",
+      "slug": "espdeviceadvertisingdata",
+      "docs": "",
+      "types": [
+        {
+          "text": "{\n  localName?: string\n  isConnectable?: number\n  manufacturerData?: any\n  serviceUUIDs?: string[]\n}",
+          "complexTypes": []
+        }
+      ]
+    },
+    {
+      "name": "ESPNetwork",
+      "slug": "espnetwork",
+      "docs": "",
+      "types": [
+        {
+          "text": "{\n  ssid: string\n  rssi: number\n  auth: 'open' | 'wep' | 'wpapsk' | 'wpawpa2psk' | 'wpa2enterprise' | 'unknown'\n}",
+          "complexTypes": []
+        }
+      ]
+    }
+  ],
+  "pluginConfigs": []
+}
