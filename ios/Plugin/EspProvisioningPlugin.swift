@@ -10,9 +10,9 @@ import CoreBluetooth
  */
 @objc(EspProvisioningPlugin)
 public class EspProvisioningPlugin: CAPPlugin {
-    
+
     private lazy var implementation = EspProvisioningBLE(self)
-   
+
     @objc public func checkStatus(_ call: CAPPluginCall) {
         implementation.checkStatus { status in
             if let status = status {
@@ -22,7 +22,7 @@ public class EspProvisioningPlugin: CAPPlugin {
             call.reject("Error checking device status")
         }
     }
-    
+
     @objc override public func checkPermissions(_ call: CAPPluginCall) {
         let result = implementation.checkPermissions()
         call.resolve(result.toDict())
@@ -32,7 +32,7 @@ public class EspProvisioningPlugin: CAPPlugin {
         let result = implementation.requestPermissions()
         call.resolve(result.toDict())
     }
-    
+
     @objc func enableLogging(_ call: CAPPluginCall) {
         implementation.enableLogging()
         call.resolve()
@@ -53,22 +53,22 @@ public class EspProvisioningPlugin: CAPPlugin {
         guard let security = self.stringToEspSecurity(call.getString("security")) else {
             return call.reject("security is required")
         }
-        
+
         if(transport == .softap){
             return call.reject("softap transport is not supported")
         }
-  
+
         implementation.searchESPDevices(devicePrefix: devicePrefix, transport: transport, security: security) { devices, error in
             if let error = error {
                 call.reject(error.message)
                 return
             }
-            
+
             let response = self.searchESPDevicesResponse(devices)
             call.resolve(response)
         }
     }
-  
+
     @objc func connect(_ call: CAPPluginCall) {
         guard let deviceName = call.getString("deviceName") else {
             return call.reject("deviceName is required")
@@ -119,12 +119,12 @@ public class EspProvisioningPlugin: CAPPlugin {
 
                 return
             }
-        
+
             let response = self.scanWifiListResponse(networks)
             call.resolve(response)
         }
     }
-    
+
     @objc func provision(_ call: CAPPluginCall) {
         guard let deviceName = call.getString("deviceName") else {
             return call.reject("deviceName is required")
@@ -133,7 +133,7 @@ public class EspProvisioningPlugin: CAPPlugin {
             return call.reject("ssid is required")
         }
         let passPhrase = call.getString("passPhrase") ?? ""
-        
+
         implementation.provision(deviceName: deviceName, ssid: ssid, passPhrase: passPhrase) { success, error in
             if let error = error {
                 call.reject(error.message)
@@ -142,7 +142,7 @@ public class EspProvisioningPlugin: CAPPlugin {
             call.resolve(["success": true])
         }
     }
-    
+
     @objc func sendCustomDataString(_ call: CAPPluginCall){
         guard let deviceName = call.getString("deviceName") else {
             return call.reject("deviceName is required")
@@ -153,13 +153,13 @@ public class EspProvisioningPlugin: CAPPlugin {
         guard let dataString = call.getString("dataString") else {
             return call.reject("dataString is required")
         }
-       
+
         implementation.sendCustomDataString(deviceName: deviceName, path: path, dataString: dataString) { returnString, error in
             if let error = error {
                 call.reject(error.message)
                 return
             }
-            
+
             if let returnString = returnString {
                 call.resolve(["success": true, "returnString": returnString])
             }else{
@@ -167,7 +167,7 @@ public class EspProvisioningPlugin: CAPPlugin {
             }
         }
     }
-    
+
     @objc func disconnect(_ call: CAPPluginCall) {
         guard let deviceName = call.getString("deviceName") else {
             return call.reject("deviceName is required")
@@ -181,7 +181,7 @@ public class EspProvisioningPlugin: CAPPlugin {
             call.resolve(["success": success])
         }
     }
-    
+
     @objc func openLocationSettings(_ call: CAPPluginCall) {
         call.unavailable("openLocationSettings is not available on iOS.")
     }
@@ -208,7 +208,7 @@ public class EspProvisioningPlugin: CAPPlugin {
             }
         }
     }
-    
+
     func scanWifiListResponse(_ networks: [ESPWifiNetwork]? ) -> [String:[[String:Any]]] {
         guard let networks = networks else {
             return ["networks": []]
@@ -227,14 +227,14 @@ public class EspProvisioningPlugin: CAPPlugin {
         }
         return ["networks": networkOutputs]
     }
-    
+
     func searchESPDevicesResponse(_ devices: [ESPDevice]? ) -> [String: [[String:Any]]] {
         guard let devices = devices else{
             return ["devices": []]
         }
-        
+
         if(devices.isEmpty) { return ["devices": []] }
-        
+
         var devicesOutput: [Dictionary<String, Any>] = []
         for device in devices {
             var deviceOutput: [String:Any] = [:]
@@ -246,7 +246,7 @@ public class EspProvisioningPlugin: CAPPlugin {
         }
         return ["devices": devicesOutput]
     }
-    
+
     func advertisementDataToJS(_ advertisementData: [String:Any]) -> [String:Any] {
         var output: [String:Any] = [:]
 
@@ -265,7 +265,7 @@ public class EspProvisioningPlugin: CAPPlugin {
             }
             output["kCBAdvDataServiceUUIDs"] = convertedServiceUUIDs
         }
-    
+
         return output
     }
 
@@ -279,7 +279,7 @@ public class EspProvisioningPlugin: CAPPlugin {
             return nil
         }
     }
-    
+
     func espTransportToString( _ transport: ESPTransport ) -> String {
         switch transport {
         case .softap:
@@ -288,7 +288,7 @@ public class EspProvisioningPlugin: CAPPlugin {
             return "ble"
         }
     }
-    
+
     func stringToEspSecurity( _ security: String? ) -> ESPSecurity? {
         switch security {
         case "secure":
@@ -301,7 +301,7 @@ public class EspProvisioningPlugin: CAPPlugin {
             return nil
         }
     }
-    
+
     func espSecurityToString( _ security: ESPSecurity ) -> String {
         switch security {
         case .secure:
@@ -312,8 +312,8 @@ public class EspProvisioningPlugin: CAPPlugin {
             return "secure2"
         }
     }
-    
-    func authModeToString( _ authMode: Espressif_WifiAuthMode ) -> String {
+
+    func authModeToString( _ authMode: WifiAuthMode ) -> String {
         switch authMode {
         case .open:
             return "open"
@@ -327,9 +327,15 @@ public class EspProvisioningPlugin: CAPPlugin {
             return "wpawpa2psk"
         case .wpa2Enterprise:
             return "wpa2enterprise"
+        case .wpa2Wpa3Psk:
+            return "wpa2Wpa3Psk"
+        case .wpa3Psk:
+            return "wpa3Psk"
         case .UNRECOGNIZED(let int):
             return "unrecognized:\(int)"
+        default:
+            return "unrecognized"
         }
     }
-    
+
 }

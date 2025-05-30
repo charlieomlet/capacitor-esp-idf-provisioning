@@ -7,7 +7,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
+
 import androidx.core.content.ContextCompat;
+
 import com.espressif.provisioning.ESPConstants;
 import com.espressif.provisioning.ESPDevice;
 import com.espressif.provisioning.WiFiAccessPoint;
@@ -20,6 +22,11 @@ import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.annotation.PermissionCallback;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
 import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.ConnectListener;
 import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.DisconnectListener;
 import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.EspProvisioningEventListener;
@@ -35,15 +42,45 @@ import java.util.stream.Stream;
 class EventCallback {}
 
 @CapacitorPlugin(
-    name = "EspProvisioning",
-    permissions = {
-        @Permission(alias = "BLUETOOTH_SCAN", strings = { Manifest.permission.BLUETOOTH_SCAN }),
-        @Permission(alias = "BLUETOOTH_CONNECT", strings = { Manifest.permission.BLUETOOTH_CONNECT }),
-        @Permission(alias = "BLUETOOTH", strings = { Manifest.permission.BLUETOOTH }),
-        @Permission(alias = "BLUETOOTH_ADMIN", strings = { Manifest.permission.BLUETOOTH_ADMIN }),
-        @Permission(alias = "ACCESS_COARSE_LOCATION", strings = { Manifest.permission.ACCESS_COARSE_LOCATION }),
-        @Permission(alias = "ACCESS_FINE_LOCATION", strings = { Manifest.permission.ACCESS_FINE_LOCATION })
-    }
+        name = "EspProvisioning",
+        permissions = {
+                @Permission(
+                        alias = "BLUETOOTH_SCAN",
+                        strings = {
+                                Manifest.permission.BLUETOOTH_SCAN
+                        }
+                ),
+                @Permission(
+                        alias = "BLUETOOTH_CONNECT",
+                        strings = {
+                                Manifest.permission.BLUETOOTH_CONNECT
+                        }
+                ),
+                @Permission(
+                        alias = "BLUETOOTH",
+                        strings = {
+                                Manifest.permission.BLUETOOTH
+                        }
+                ),
+                @Permission(
+                        alias = "BLUETOOTH_ADMIN",
+                        strings = {
+                                Manifest.permission.BLUETOOTH_ADMIN
+                        }
+                ),
+                @Permission(
+                        alias = "ACCESS_COARSE_LOCATION",
+                        strings = {
+                                Manifest.permission.ACCESS_COARSE_LOCATION
+                        }
+                ),
+                @Permission(
+                        alias = "ACCESS_FINE_LOCATION",
+                        strings = {
+                                Manifest.permission.ACCESS_FINE_LOCATION
+                        }
+                )
+        }
 )
 public class EspProvisioningPlugin extends Plugin implements EspProvisioningEventListener {
 
@@ -54,7 +91,7 @@ public class EspProvisioningPlugin extends Plugin implements EspProvisioningEven
         implementation = new EspProvisioningBLE(this.getBridge(), this);
     }
 
-    public String[] blePermissionAliases() {
+    public String[] blePermissionAliases(){
         if (Build.VERSION.SDK_INT >= 31) {
             return new String[] { "BLUETOOTH_SCAN", "BLUETOOTH_CONNECT" };
         } else {
@@ -62,23 +99,21 @@ public class EspProvisioningPlugin extends Plugin implements EspProvisioningEven
         }
     }
 
-    public String[] locationPermissionAliases() {
+    public String[] locationPermissionAliases(){
         if (Build.VERSION.SDK_INT >= 31) {
-            return new String[] { "ACCESS_FINE_LOCATION" }; // "ACCESS_FINE_LOCATION"
+            return new String[] {}; // Not needed for sdk >31
         } else {
             return new String[] { "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION" };
         }
     }
 
-    private String[] allPermissionAliases() {
-        return Stream
-            .concat(Arrays.stream(this.blePermissionAliases()), Arrays.stream(this.locationPermissionAliases()))
-            .toArray(String[]::new);
+    private String[] allPermissionAliases(){
+        return Stream.concat(Arrays.stream(this.blePermissionAliases()), Arrays.stream(this.locationPermissionAliases())).toArray(String[]::new);
     }
 
-    public boolean blePermissionsGranted() {
+    public boolean blePermissionsGranted(){
         boolean allPermitted = true;
-        for (String alias : this.blePermissionAliases()) {
+        for (String alias: this.blePermissionAliases()) {
             PermissionState state = this.getPermissionState(alias);
             Log.d("capacitor-esp-provision", String.format("checking %s -> %s", alias, state.toString()));
             if (state != PermissionState.GRANTED) {
@@ -89,9 +124,9 @@ public class EspProvisioningPlugin extends Plugin implements EspProvisioningEven
         return allPermitted;
     }
 
-    public boolean locationPermissionsGranted() {
+    public boolean locationPermissionsGranted(){
         boolean allPermitted = true;
-        for (String alias : this.locationPermissionAliases()) {
+        for (String alias: this.locationPermissionAliases()) {
             PermissionState state = this.getPermissionState(alias);
             Log.d("capacitor-esp-provision", String.format("checking %s -> %s", alias, state.toString()));
             if (state != PermissionState.GRANTED) {
@@ -111,48 +146,35 @@ public class EspProvisioningPlugin extends Plugin implements EspProvisioningEven
     public void requestPermissions(PluginCall call) {
         boolean needsRequest = false;
 
-        if (this.implementation.hasBLEHardware() && !this.blePermissionsGranted()) {
+        if(this.implementation.hasBLEHardware() && !this.blePermissionsGranted()){
             needsRequest = true;
         }
 
-        if (!this.locationPermissionsGranted()) {
+        if(!this.locationPermissionsGranted()){
             needsRequest = true;
         }
 
-        if (needsRequest) {
+        if(needsRequest){
             String[] aliases = this.allPermissionAliases();
             Log.d("capacitor-esp-provision", String.format("Requesting permission aliases: %s", String.join(", ", aliases)));
             requestPermissionForAliases(aliases, call, "permissionsCallback");
-        } else {
+        }else{
             this.permissionsCallback(call);
         }
+
     }
 
     @PermissionCallback
     private void permissionsCallback(PluginCall call) {
         String[] aliases = this.allPermissionAliases();
-        Log.d(
-            "capacitor-esp-provision",
-            String.format(
-                "Requested ble permissions [%s]: hasBLEHardware=%b; blePermissionGranted=%b;",
-                String.join(", ", aliases),
-                this.implementation.hasBLEHardware(),
-                this.blePermissionsGranted()
-            )
-        );
+        Log.d("capacitor-esp-provision", String.format("Requested ble permissions [%s]: hasBLEHardware=%b; blePermissionGranted=%b;", String.join(", ", aliases), this.implementation.hasBLEHardware(), this.blePermissionsGranted()));
 
-        if (this.implementation.hasBLEHardware() && !this.blePermissionsGranted()) {
-            call.reject(
-                String.format(
-                    "BLE is required [hasBLEHardware=%b; blePermissionsGranted=%b]",
-                    this.implementation.hasBLEHardware(),
-                    this.blePermissionsGranted()
-                )
-            );
+        if(this.implementation.hasBLEHardware() && !this.blePermissionsGranted()){
+            call.reject(String.format("BLE is required [hasBLEHardware=%b; blePermissionsGranted=%b]", this.implementation.hasBLEHardware(), this.blePermissionsGranted()));
             return;
         }
 
-        if (!this.locationPermissionsGranted()) {
+        if(!this.locationPermissionsGranted()){
             call.reject("Location access is required to use BLE");
             return;
         }
@@ -161,7 +183,7 @@ public class EspProvisioningPlugin extends Plugin implements EspProvisioningEven
     }
 
     // TODO: this function seems old - kill it with fire
-    private JSObject getPermissions() {
+    private JSObject getPermissions(){
         PermissionState blePermission = this.blePermissionsGranted() ? PermissionState.GRANTED : PermissionState.DENIED;
         PermissionState locationPermission = this.locationPermissionsGranted() ? PermissionState.GRANTED : PermissionState.DENIED;
 
@@ -176,7 +198,7 @@ public class EspProvisioningPlugin extends Plugin implements EspProvisioningEven
         call.resolve(this.buildStatus());
     }
 
-    private JSObject buildStatus() {
+    private JSObject buildStatus(){
         JSObject ret = new JSObject();
 
         JSObject ble = new JSObject();
@@ -294,6 +316,29 @@ public class EspProvisioningPlugin extends Plugin implements EspProvisioningEven
                 }
             }
         );
+    }
+
+    private String securityIntToString(int security) {
+        switch (security) {
+            case 0:
+                return "open";
+            case 1:
+                return "wep";
+            case 2:
+                return "wpapsk";
+            case 3:
+                return "wpa2psk";
+            case 4:
+                return "wpawpa2psk";
+            case 5:
+                return "wpa2enterprise";
+            case 6:
+                return "wpa2Wpa3Psk";
+            case 7:
+                return "wpa3Psk";
+            default:
+                return "unrecognized";
+        }
     }
 
     @PluginMethod

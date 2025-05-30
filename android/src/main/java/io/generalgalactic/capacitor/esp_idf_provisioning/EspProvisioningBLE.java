@@ -28,6 +28,18 @@ import com.espressif.provisioning.listeners.WiFiScanListener;
 import com.getcapacitor.Bridge;
 import com.getcapacitor.PermissionState;
 import com.getcapacitor.PluginMethod;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.ConnectListener;
 import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.DisconnectListener;
 import io.generalgalactic.capacitor.esp_idf_provisioning.listeners.EspProvisioningEventListener;
@@ -146,7 +158,7 @@ public class EspProvisioningBLE {
             return false;
         }
 
-        if (!this.blePermissionsGranted()) {
+        if(!this.blePermissionsGranted()) {
             if (listener != null) listener.blePermissionNotGranted();
             return false;
         }
@@ -159,34 +171,22 @@ public class EspProvisioningBLE {
         return true;
     }
 
-    private boolean blePermissionsGranted() {
+    private boolean blePermissionsGranted(){
         if (Build.VERSION.SDK_INT >= 31) {
-            if (
-                ActivityCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.BLUETOOTH_SCAN) !=
-                PackageManager.PERMISSION_GRANTED
-            ) {
+            if (ActivityCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
                 Log.d("capacitor-esp-provision", String.format("MISSING PERMISSION: ", Manifest.permission.BLUETOOTH_SCAN));
                 return false;
             }
-            if (
-                ActivityCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.BLUETOOTH_CONNECT) !=
-                PackageManager.PERMISSION_GRANTED
-            ) {
+            if (ActivityCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 Log.d("capacitor-esp-provision", String.format("MISSING PERMISSION: ", Manifest.permission.BLUETOOTH_CONNECT));
                 return false;
             }
         } else {
-            if (
-                ActivityCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.BLUETOOTH) !=
-                PackageManager.PERMISSION_GRANTED
-            ) {
+            if (ActivityCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
                 Log.d("capacitor-esp-provision", String.format("MISSING PERMISSION: ", Manifest.permission.BLUETOOTH));
                 return false;
             }
-            if (
-                ActivityCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.BLUETOOTH_ADMIN) !=
-                PackageManager.PERMISSION_GRANTED
-            ) {
+            if (ActivityCompat.checkSelfPermission(this.bridge.getContext(), Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
                 Log.d("capacitor-esp-provision", String.format("MISSING PERMISSION: ", Manifest.permission.BLUETOOTH_ADMIN));
                 return false;
             }
@@ -378,7 +378,7 @@ public class EspProvisioningBLE {
         ESPDevice espDevice = this.getESPProvisionManager().getEspDevice();
         if (espDevice == null) return null;
 
-        if (!espDevice.getDeviceName().equals(bleDevice.getName())) {
+        if( !Objects.equals(espDevice.getDeviceName(), bleDevice.getName()) ){
             debugLog(String.format("Device mismatch. %s != %s", espDevice.getDeviceName(), bleDevice.getName()));
             return null;
         }
