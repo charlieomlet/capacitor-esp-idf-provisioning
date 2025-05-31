@@ -51,7 +51,7 @@ class ConnectionDelegate: ESPDeviceConnectionDelegate {
     }
     
     func getUsername(forDevice: ESPDevice, completionHandler: @escaping (String?) -> Void) {
-        completionHandler(nil) // TODO: how to support sec2?
+        completionHandler(self.userName)
     }
 
 }
